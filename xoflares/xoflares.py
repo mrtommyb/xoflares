@@ -3,6 +3,61 @@ import theano
 import theano.tensor as tt
 
 
+# class FlareLightCurve(object):
+
+#     def __init__(self):
+#         pass
+
+#     def get_light_curve(self, time=None, tpeaks=None,
+#                         fwhms=None, ampls=None,
+#                         oversample=7,
+#                         texp=None):
+#         self.time = time
+#         self.tpeaks = tpeaks
+#         self.fwhms = fwhms
+
+#         if texp is not None:
+#             # taking this oversample code from
+#             # https://github.com/dfm/exoplanet
+#             texp = tt.as_tensor_variable(texp)
+#             oversample = int(oversample)
+#             oversample += 1 - oversample % 2
+#             stencil = np.ones(oversample)
+
+#             # Construct the exposure time integration stencil
+#             dt = np.linspace(-0.5, 0.5, 2*oversample+1)[1:-1:2]
+#             stencil /= np.sum(stencil)
+
+#             dt = texp * dt
+#             tgrid = tt.shape_padright(time) + dt
+
+#             lc = multiflaremodel(tgrid)
+
+def get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
+    time = time.astype('float64')
+    time = tt.as_tensor_variable(time)
+
+    if texp is None:
+        tgrid = time
+    if texp is not None:
+        # taking this oversample code from
+        # https://github.com/dfm/exoplanet
+        # and https://github.com/lkreidberg/batman
+        oversample = int(oversample)
+        oversample += 1 - oversample % 2
+        dt = np.linspace(-texp / 2., texp / 2.,
+                         oversample)
+        tgrid = tt.shape_padright(time) + dt
+
+    multiflare_lc = multiflaremodel(tgrid, tpeaks, fwhms, ampls)
+
+    if texp is not None:
+        multiflare_lc = tt.mean(tt.reshape(multiflare_lc, (-1, oversample)),
+                                axis=1)
+
+    return multiflare_lc
+
+
 def multiflaremodel(time, tpeaks, fwhms, ampls):
     time = time.astype('float64')
     time = tt.as_tensor_variable(time)
@@ -69,6 +124,32 @@ def multiflare(time, tpeaks, fwhms, ampls):
 
 
 # reference implementation in numpy
+def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
+    time = np.asarray(time, dtype=float)
+
+    if texp is None:
+        tgrid = time
+    if texp is not None:
+        # taking this oversample code from
+        # https://github.com/dfm/exoplanet
+        # and https://github.com/lkreidberg/batman
+        texp = float(texp)
+        oversample = int(oversample)
+        oversample += 1 - oversample % 2
+        dt = np.linspace(-texp / 2., texp / 2.,
+                         oversample)
+        tgrid = (dt + time.reshape(time.size, 1)).flatten()
+
+    multiflare_lc = multiflaremodelnp(tgrid, tpeaks, fwhms, ampls)
+
+    if texp is not None:
+        multiflare_lc = np.mean(
+            multiflare_lc.reshape(-1, oversample),
+            axis=1)
+
+    return multiflare_lc
+
+
 def multiflaremodelnp(time, tpeaks, fwhms, ampls):
     time = np.asarray(time, dtype=float)
     tpeaks = np.asarray(tpeaks, dtype=float)
