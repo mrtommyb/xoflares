@@ -68,7 +68,7 @@ def multiflaremodel(time, tpeaks, fwhms, ampls):
         tcut = (((time - tpeak) / fwhm > -1.) *
                 ((time - tpeak) / fwhm < 20.)).nonzero()
         flare_lc = _flaremodel(time[tcut], tpeak, fwhm, ampl)
-        zeropad_flare_lc = tt.set_subtensor(zeropad_flare_lc[tcut],  flare_lc)
+        zeropad_flare_lc = tt.set_subtensor(zeropad_flare_lc[tcut], flare_lc)
         return zeropad_flare_lc
 
     components, updates = theano.scan(fn=scan_func,
@@ -119,7 +119,9 @@ def multiflare(time, tpeaks, fwhms, ampls):
     fwhmsx = tt.dvector('fwhmsx')
     amplsx = tt.dvector('amplsx')
     multiflare_function = theano.function([timex, tpeaksx, fwhmsx, amplsx],
-                                          multiflaremodel(timex, tpeaksx, fwhmsx, amplsx))
+                                          multiflaremodel(timex,
+                                                          tpeaksx, fwhmsx,
+                                                          amplsx))
     return multiflare_function(time, tpeaks, fwhms, ampls)
 
 

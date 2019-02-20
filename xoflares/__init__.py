@@ -3,4 +3,6 @@
 from .version import __version__
 from .xoflares import (multiflaremodel,
                        multiflare,
-                       multiflaremodelnp)
+                       multiflaremodelnp,
+                       get_light_curvenp,
+                       get_light_curve)
