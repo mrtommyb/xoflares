@@ -1,9 +1,11 @@
 import numpy as np
 import theano
 import theano.tensor as tt
+from scipy import integrate
 
 
 # class FlareLightCurve(object):
+#     "at some point soon I'll make this a class"
 
 #     def __init__(self):
 #         pass
@@ -190,3 +192,26 @@ def _flaremodelnp(time, tpeak, fwhm, ampl):
                         flare_lc
                         )
     return flare_lc
+
+
+def get_flare_integral(time, tpeak, fwhm, ampl, texp=None, oversample=7):
+    """
+    calculates the integral of flares. Useful for calculating
+    equivalent width and energy
+
+    this is designed to be a post processing step, not run within the
+    HMC model. This is mostly because it is slightly awkward to implement
+    and integral in theano
+    """
+    feval = get_light_curvenp(time,
+                              tpeak,
+                              fwhm,
+                              ampl,
+                              texp,
+                              oversample)
+    tstart, tend = time[feval > 0][0], feval[feval > 0][-1]
+    integral = integrate.quad(get_light_curvenp, tstart, tend,
+                              points=tpeak,
+                              args=(tpeak, fwhm, ampl, texp, oversample))
+    return integral
+
