@@ -129,6 +129,10 @@ def multiflare(time, tpeaks, fwhms, ampls):
 def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
     time = np.asarray(time, dtype=float)
 
+    tpeaks = np.atleast_1d(tpeaks)
+    fwhms = np.atleast_1d(fwhms)
+    ampls = np.atleast_1d(ampls)
+
     if texp is None:
         tgrid = time
     if texp is not None:
@@ -154,9 +158,9 @@ def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
 
 def multiflaremodelnp(time, tpeaks, fwhms, ampls):
     time = np.asarray(time, dtype=float)
-    tpeaks = np.asarray(tpeaks, dtype=float)
-    fwhms = np.asarray(fwhms, dtype=float)
-    ampls = np.asarray(ampls, dtype=float)
+    # tpeaks = np.asarray(tpeaks, dtype=float)
+    # fwhms = np.asarray(fwhms, dtype=float)
+    # ampls = np.asarray(ampls, dtype=float)
     multiflare_lc = np.zeros_like(time)
     npeaks = tpeaks.shape[0]
     for i in range(npeaks):
