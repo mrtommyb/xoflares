@@ -127,6 +127,20 @@ def multiflare(time, tpeaks, fwhms, ampls):
     return multiflare_function(time, tpeaks, fwhms, ampls)
 
 
+def eval_get_light_curve(time, tpeaks, fwhms, ampls,
+                         texp=None, oversample=7):
+    timex = tt.dvector('timex')
+    tpeaksx = tt.dvector('tpeaksx')
+    fwhmsx = tt.dvector('fwhmsx')
+    amplsx = tt.dvector('amplsx')
+    multiflare_function = theano.function([timex, tpeaksx, fwhmsx, amplsx],
+                                          get_light_curve(timex,
+                                                          tpeaksx, fwhmsx,
+                                                          amplsx, texp,
+                                                          oversample))
+    return multiflare_function(time, tpeaks, fwhms, ampls)
+
+
 # reference implementation in numpy
 def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
     time = np.asarray(time, dtype=float)
@@ -160,9 +174,9 @@ def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
 
 def multiflaremodelnp(time, tpeaks, fwhms, ampls):
     time = np.asarray(time, dtype=float)
-    # tpeaks = np.asarray(tpeaks, dtype=float)
-    # fwhms = np.asarray(fwhms, dtype=float)
-    # ampls = np.asarray(ampls, dtype=float)
+    tpeaks = np.atleast_1d(tpeaks)
+    fwhms = np.atleast_1d(fwhms)
+    ampls = np.atleast_1d(ampls)
     multiflare_lc = np.zeros_like(time)
     npeaks = tpeaks.shape[0]
     for i in range(npeaks):

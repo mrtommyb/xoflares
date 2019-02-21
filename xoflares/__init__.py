@@ -5,4 +5,5 @@ from .xoflares import (multiflaremodel,
                        multiflare,
                        multiflaremodelnp,
                        get_light_curvenp,
-                       get_light_curve)
+                       get_light_curve,
+                       eval_get_light_curve)
