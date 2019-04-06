@@ -25,9 +25,9 @@ def test_calc_with_oversample():
     from xoflares import get_light_curvenp
     from xoflares import eval_get_light_curve
     x = np.arange(0, 10, 2 / 1440)
-    tpeaks = [1, 2, 3, 4]
-    fwhms = [0.5, 0.5, 0.5, 2]
-    ampls = [1, 2, 3, 4]
+    tpeaks = np.array([1, 2, 3, 4])
+    fwhms = np.array([0.5, 0.5, 0.5, 2])
+    ampls = np.array([1, 2, 3, 4])
     flare_lc = eval_get_light_curve(x, tpeaks, fwhms, ampls, texp=1,
                                     oversample=11)
     flare_lc_np = get_light_curvenp(x, tpeaks, fwhms, ampls, texp=1,
