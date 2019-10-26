@@ -55,3 +55,21 @@ def test_integrals():
     assert np.shape(fwhms)[0] == np.shape(integrals)[0]
     assert np.shape(fwhms)[0] == np.shape(integrals_np)[0]
     assert np.sum(np.abs(integrals - integrals_np)) < 1.0e-12
+
+def test_integrals_numerical():
+    from xoflares.xoflares import get_flare_integral_numerical
+    from xoflares import multiflareintegralnp
+
+    x = np.arange(0, 100, 2 / 1440)
+    tpeaks = np.array([10, 20, 30, 40])
+    fwhms = np.array([0.01, 0.01, 0.01, 1])
+    ampls = np.array([1, 2, 3, 4])
+    integrals = np.zeros_like(fwhms)
+    for i in range(len(tpeaks)):
+        integrals[i] = get_flare_integral_numerical(x, tpeaks[i], fwhms[i], ampls[i])[0]
+
+    integrals_np = multiflareintegralnp(fwhms, ampls)
+
+    assert np.shape(fwhms)[0] == np.shape(integrals)[0]
+    assert np.shape(fwhms)[0] == np.shape(integrals_np)[0]
+    assert np.sum(np.abs(integrals - integrals_np)) < 1.0e-4

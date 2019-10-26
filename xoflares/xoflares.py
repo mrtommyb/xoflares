@@ -218,9 +218,9 @@ def get_light_curvenp(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
 
 def multiflaremodelnp(time, tpeaks, fwhms, ampls):
     time = np.asarray(time, dtype=float)
-    tpeaks = np.atleast_1d(tpeaks)
-    fwhms = np.atleast_1d(fwhms)
-    ampls = np.atleast_1d(ampls)
+    tpeaks = np.atleast_1d(tpeaks, dtype=float)
+    fwhms = np.atleast_1d(fwhms, dtype=float)
+    ampls = np.atleast_1d(ampls, dtype=float)
     multiflare_lc = np.zeros_like(time)
     npeaks = tpeaks.shape[0]
     for i in range(npeaks):
@@ -303,8 +303,8 @@ def _flareintegralnp(fwhm, ampl):
 
 
 def multiflareintegralnp(fwhms, ampls):
-    fwhms = np.atleast_1d(fwhms)
-    ampls = np.atleast_1d(ampls)
+    fwhms = np.atleast_1d(fwhms, dtype=float)
+    ampls = np.atleast_1d(ampls, dtype=float)
     npeaks = fwhms.shape[0]
     multiintegral = np.zeros_like(fwhms)
     for i in range(npeaks):
