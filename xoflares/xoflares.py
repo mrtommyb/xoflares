@@ -223,7 +223,7 @@ def get_flare_integral(time, tpeak, fwhm, ampl, texp=None, oversample=7):
                               ampl,
                               texp,
                               oversample)
-    tstart, tend = time[feval > 0][0], feval[feval > 0][-1]
+    tstart, tend = time[feval > 0][0], time[feval > 0][-1]
     integral = integrate.quad(get_light_curvenp, tstart, tend,
                               points=tpeak,
                               args=(tpeak, fwhm, ampl, texp, oversample))
