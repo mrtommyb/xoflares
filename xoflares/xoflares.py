@@ -262,12 +262,7 @@ def get_flare_integral_numerical(
     time, tpeak, fwhm, ampl, texp=None, oversample=7
 ):
     """
-    calculates the integral of flares. Useful for calculating
-    equivalent width and energy
-
-    this is designed to be a post processing step, not run within the
-    HMC model. This is mostly because it is slightly awkward to implement
-    and integral in theano
+    used in testing flare integral
     """
     feval = get_light_curvenp(time, tpeak, fwhm, ampl, texp, oversample)
     tstart, tend = time[feval > 0][0], time[feval > 0][-1]
@@ -315,3 +310,4 @@ def multiflareintegralnp(fwhms, ampls):
     for i in range(npeaks):
         multiintegral[i] = _flareintegralnp(fwhms[i], ampls[i])
     return multiintegral
+
