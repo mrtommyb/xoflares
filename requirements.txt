@@ -1,3 +1,6 @@
 theano>=1.0.0
 numpy>=1.13.0
 pymc3>=3.6
+matplotlib
+lightkurve
+exoplanet
