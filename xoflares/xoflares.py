@@ -2,7 +2,7 @@ import numpy as np
 import theano
 import theano.tensor as tt
 from scipy import integrate
-
+import gc
 
 # class FlareLightCurve(object):
 #     "at some point soon I'll make this a class"
@@ -57,7 +57,9 @@ def get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
         multiflare_lc = tt.mean(
             tt.reshape(multiflare_lc, (-1, oversample)), axis=1
         )
-
+    gc.collect()
+    gc.collect()
+    gc.collect()
     return multiflare_lc
 
 
