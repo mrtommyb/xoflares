@@ -57,9 +57,9 @@ def get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
         multiflare_lc = tt.mean(
             tt.reshape(multiflare_lc, (-1, oversample)), axis=1
         )
-    gc.collect()
-    gc.collect()
-    gc.collect()
+    # gc.collect()
+    # gc.collect()
+    # gc.collect()
     return multiflare_lc
 
 
