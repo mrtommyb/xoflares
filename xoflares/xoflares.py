@@ -2,7 +2,8 @@ import numpy as np
 import theano
 import theano.tensor as tt
 from scipy import integrate
-import gc
+
+theano.config.scan.allow_gc = True
 
 # class FlareLightCurve(object):
 #     "at some point soon I'll make this a class"
@@ -57,32 +58,52 @@ def get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
         multiflare_lc = tt.mean(
             tt.reshape(multiflare_lc, (-1, oversample)), axis=1
         )
-    # gc.collect()
-    # gc.collect()
-    # gc.collect()
     return multiflare_lc
 
 
 def multiflaremodel(time, tpeaks, fwhms, ampls):
-    time = time.astype("float64")
-    time = tt.as_tensor_variable(time)
+    # time = time.astype("float64")
+    # time = tt.as_tensor_variable(time)
     multiflare_lc = tt.zeros_like(time)
 
-    def scan_func(tpeak, fwhm, ampl):
+    def scan_func(tpeak, fwhm, ampl, sum_to_date, time):
         zeropad_flare_lc = tt.zeros_like(time)
         tcut = (
             ((time - tpeak) / fwhm > -1.0) * ((time - tpeak) / fwhm < 20.0)
         ).nonzero()
         flare_lc = _flaremodel(time[tcut], tpeak, fwhm, ampl)
         zeropad_flare_lc = tt.set_subtensor(zeropad_flare_lc[tcut], flare_lc)
-        return zeropad_flare_lc
+        return zeropad_flare_lc + sum_to_date
 
     components, updates = theano.scan(
-        fn=scan_func, sequences=[tpeaks, fwhms, ampls]
+        fn=scan_func, sequences=[tpeaks, fwhms, ampls],
+        non_sequences=time, outputs_info=tt.zeros_like(time),
     )
-    multiflare_lc = tt.sum(components, axis=0)
+    multiflare_lc = components[-1]
 
     return multiflare_lc
+
+
+# def multiflaremodel(time, tpeaks, fwhms, ampls):
+#     time = time.astype("float64")
+#     time = tt.as_tensor_variable(time)
+#     multiflare_lc = tt.zeros_like(time)
+
+#     def scan_func(tpeak, fwhm, ampl, time):
+#         zeropad_flare_lc = tt.zeros_like(time)
+#         tcut = (
+#             ((time - tpeak) / fwhm > -1.0) * ((time - tpeak) / fwhm < 20.0)
+#         ).nonzero()
+#         flare_lc = _flaremodel(time[tcut], tpeak, fwhm, ampl)
+#         zeropad_flare_lc = tt.set_subtensor(zeropad_flare_lc[tcut], flare_lc)
+#         return zeropad_flare_lc
+
+#     components, updates = theano.scan(
+#         fn=scan_func, sequences=[tpeaks, fwhms, ampls],
+#         non_sequences=time, outputs_info=None,
+#     )
+#     multiflare_lc = tt.sum(components, axis=0)
+#     return multiflare_lc
 
 
 def _flaremodel(time, tpeak, fwhm, ampl):
