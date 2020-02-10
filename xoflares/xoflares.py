@@ -176,9 +176,9 @@ def eval_get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
     # return multiflare_function(time, tpeaks, fwhms, ampls)
     multiflare_function = theano.function(
         [],
-        multiflaremodel(tt.as_tensor_variable(time),
+        get_light_curve(tt.as_tensor_variable(time),
             tt.as_tensor_variable(tpeaks), tt.as_tensor_variable(fwhms),
-            tt.as_tensor_variable(ampls)), texp, oversample
+            tt.as_tensor_variable(ampls), texp, oversample)
     )
     return multiflare_function()
 
