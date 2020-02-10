@@ -145,28 +145,42 @@ def _after_flare(time, tpeak, fwhm, ampl):
 
 
 def multiflare(time, tpeaks, fwhms, ampls):
-
-    timex = tt.dvector("timex")
-    tpeaksx = tt.dvector("tpeaksx")
-    fwhmsx = tt.dvector("fwhmsx")
-    amplsx = tt.dvector("amplsx")
     multiflare_function = theano.function(
-        [timex, tpeaksx, fwhmsx, amplsx],
-        multiflaremodel(timex, tpeaksx, fwhmsx, amplsx),
+        [],
+        multiflaremodel(tt.as_tensor_variable(time),
+            tt.as_tensor_variable(tpeaks), tt.as_tensor_variable(fwhms),
+            tt.as_tensor_variable(ampls)),
     )
-    return multiflare_function(time, tpeaks, fwhms, ampls)
+    return multiflare_function()
+
+    # timex = tt.dvector("timex")
+    # tpeaksx = tt.dvector("tpeaksx")
+    # fwhmsx = tt.dvector("fwhmsx")
+    # amplsx = tt.dvector("amplsx")
+    # multiflare_function = theano.function(
+    #     [timex, tpeaksx, fwhmsx, amplsx],
+    #     multiflaremodel(timex, tpeaksx, fwhmsx, amplsx),
+    # )
+    # return multiflare_function(time, tpeaks, fwhms, ampls)
 
 
 def eval_get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
-    timex = tt.dvector("timex")
-    tpeaksx = tt.dvector("tpeaksx")
-    fwhmsx = tt.dvector("fwhmsx")
-    amplsx = tt.dvector("amplsx")
+    # timex = tt.dvector("timex")
+    # tpeaksx = tt.dvector("tpeaksx")
+    # fwhmsx = tt.dvector("fwhmsx")
+    # amplsx = tt.dvector("amplsx")
+    # multiflare_function = theano.function(
+    #     [timex, tpeaksx, fwhmsx, amplsx],
+    #     get_light_curve(timex, tpeaksx, fwhmsx, amplsx, texp, oversample),
+    # )
+    # return multiflare_function(time, tpeaks, fwhms, ampls)
     multiflare_function = theano.function(
-        [timex, tpeaksx, fwhmsx, amplsx],
-        get_light_curve(timex, tpeaksx, fwhmsx, amplsx, texp, oversample),
+        [],
+        multiflaremodel(tt.as_tensor_variable(time),
+            tt.as_tensor_variable(tpeaks), tt.as_tensor_variable(fwhms),
+            tt.as_tensor_variable(ampls)), texp, oversample
     )
-    return multiflare_function(time, tpeaks, fwhms, ampls)
+    return multiflare_function()
 
 
 def _flareintegral(fwhm, ampl):
