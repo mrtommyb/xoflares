@@ -1,9 +1,9 @@
 import numpy as np
-import theano
-import theano.tensor as tt
+import aesara
+import aesara.tensor as tt
 from scipy import integrate
 
-theano.config.scan.allow_gc = True
+# theano.config.scan.allow_gc = True
 
 # class FlareLightCurve(object):
 #     "at some point soon I'll make this a class"
@@ -75,7 +75,7 @@ def multiflaremodel(time, tpeaks, fwhms, ampls):
         zeropad_flare_lc = tt.set_subtensor(zeropad_flare_lc[tcut], flare_lc)
         return zeropad_flare_lc + sum_to_date
 
-    components, updates = theano.scan(
+    components, updates = aesara.scan(
         fn=scan_func, sequences=[tpeaks, fwhms, ampls],
         non_sequences=time, outputs_info=tt.zeros_like(time),
     )
@@ -145,7 +145,7 @@ def _after_flare(time, tpeak, fwhm, ampl):
 
 
 def multiflare(time, tpeaks, fwhms, ampls):
-    multiflare_function = theano.function(
+    multiflare_function = aesara.function(
         [],
         multiflaremodel(tt.as_tensor_variable(time),
             tt.as_tensor_variable(tpeaks), tt.as_tensor_variable(fwhms),
@@ -174,7 +174,7 @@ def eval_get_light_curve(time, tpeaks, fwhms, ampls, texp=None, oversample=7):
     #     get_light_curve(timex, tpeaksx, fwhmsx, amplsx, texp, oversample),
     # )
     # return multiflare_function(time, tpeaks, fwhms, ampls)
-    multiflare_function = theano.function(
+    multiflare_function = aesara.function(
         [],
         get_light_curve(tt.as_tensor_variable(time),
             tt.as_tensor_variable(tpeaks), tt.as_tensor_variable(fwhms),
@@ -210,7 +210,7 @@ def _flareintegral(fwhm, ampl):
 
 
 def multiflareintegral(fwhms, ampls):
-    components, updates = theano.scan(
+    components, updates = aesara.scan(
         fn=_flareintegral, sequences=[fwhms, ampls]
     )
     return components
@@ -219,7 +219,7 @@ def multiflareintegral(fwhms, ampls):
 def eval_multiflareintegral(fwhms, ampls):
     fwhmsx = tt.dvector("fwhmsx")
     amplsx = tt.dvector("amplsx")
-    multintegral_function = theano.function(
+    multintegral_function = aesara.function(
         [fwhmsx, amplsx], multiflareintegral(fwhmsx, amplsx)
     )
     return multintegral_function(fwhms, ampls)
