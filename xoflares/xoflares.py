@@ -1,6 +1,6 @@
 import numpy as np
-import aesara
-import aesara.tensor as tt
+import theano as aesara
+import theano.tensor as tt
 from scipy import integrate
 
 # theano.config.scan.allow_gc = True
@@ -110,12 +110,12 @@ def _flaremodel(time, tpeak, fwhm, ampl):
     # reuses some code from AltaiPony and Apaloosa
     time = tt.as_tensor_variable(time)
     flare_lc = tt.zeros_like(time)
-    flare_lc = tt.where(
+    flare_lc = tt.switch(
         (time <= tpeak) * ((time - tpeak) / fwhm > -1.0),
         _before_flare(time, tpeak, fwhm, ampl),
         flare_lc,
     )
-    flare_lc = tt.where(
+    flare_lc = tt.switch(
         (time > tpeak) * ((time - tpeak) / fwhm < 20.0),
         _after_flare(time, tpeak, fwhm, ampl),
         flare_lc,
