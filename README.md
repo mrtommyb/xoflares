@@ -6,3 +6,8 @@ Instead of just trying to cut them out, let's model them!
 
 I used the flare model implemented in [AltaiPony](https://github.com/ekaterinailin/AltaiPony), which is based on 
 [appaloosa](https://github.com/jradavenport/appaloosa/). If you use it please cite [Davenport (2016, ApJ)](https://arxiv.org/abs/1607.03494).
+
+## Rework roadmap
+
+The plan for the requested repository redesign is tracked in:
+- [REWORK_PLAN.md](./REWORK_PLAN.md)
