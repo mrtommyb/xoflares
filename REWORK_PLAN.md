@@ -1,6 +1,6 @@
 # xoflares rework plan
 
-This document defines a concrete path for the repository rework requested in issue:
+This document defines a concrete path for the repository rework requested in the issue titled "Complete rework of this repo":
 - adopt a flare model based on Lupita Tovar's work (currently available in notebooks),
 - replace PyMC-based sampling with an alternative that still integrates with transit modeling workflows.
 
